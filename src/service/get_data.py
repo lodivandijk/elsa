@@ -14,7 +14,7 @@ def get_alpha_weekly(stock_ticker):
 
 def json_to_dataframe(json_data):
     time_series = json_data.get("Weekly Time Series", {})
-    data = [{"date": date, "close": float(values["4. close"])} for date, values in time_series.items()]
+    data = [{"date": date, "close": float(values["4. close"]), "volume": int(values["5. volume"])} for date, values in time_series.items()]
     df = pd.DataFrame(data)
     df['date'] = pd.to_datetime(df['date'])
     return df
