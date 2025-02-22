@@ -23,6 +23,6 @@ def main():
 
     window = wg.WindowGenerator(input_width=120, label_width=1, shift=1, split_data=split_data, label_columns=['close'])
     logging.info(f"Window details \n {window}")
-    
+
 if __name__ == "__main__":
     main()
