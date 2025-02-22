@@ -1,17 +1,11 @@
-import argparse
-from data_service.get_data import get_alpha_weekly, json_to_dataframe
+import src.service.get_data as av
 
 def main():
-    print("Starting elsa")
-    parser = argparse.ArgumentParser(description='Process stock ticker.')
-    parser.add_argument('stock_ticker', type=str, help='The stock ticker symbol')
-    args = parser.parse_args()
+    API_KEY = "CBU3HK62CDA53MJU"
+    alpha_vantage = av.AlphaVantageAPI(API_KEY)
 
-    stock_ticker = args.stock_ticker #"IBM"
-    json_data = get_alpha_weekly(stock_ticker)
-    df_ticker = json_to_dataframe(json_data)
-    print(df_ticker.head())
-    print(df_ticker.dtypes)
+    daily_data = alpha_vantage.get_weekly_stock_prices("AAPL")
+    print(daily_data.head())
 
 if __name__ == "__main__":
     main()
