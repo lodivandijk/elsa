@@ -7,7 +7,7 @@ class AlphaVantageAPI:
     def __init__(self, api_key):
         self.api_key = api_key
 
-    def get_weekly_stock_prices(self, symbol, output_size="compact"):
+    def get_weekly_stock_prices(self, symbol, output_size="full"):
         """
         Fetches daily stock prices.
         :param symbol: Stock ticker symbol (e.g., "AAPL").
