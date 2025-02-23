@@ -1,8 +1,13 @@
 import requests
 import pandas as pd
+import logging
+import os
+import json
+from datetime import datetime
 
 class AlphaVantageAPI:
     BASE_URL = "https://www.alphavantage.co/query"
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
     def __init__(self, api_key):
         self.api_key = api_key
@@ -14,15 +19,34 @@ class AlphaVantageAPI:
         :param output_size: "compact" (last 100 days) or "full" (all historical data).
         :return: Pandas DataFrame with daily stock prices.
         """
-        params = {
-            "function": "TIME_SERIES_WEEKLY",
-            "symbol": symbol,
-            "apikey": self.api_key,
-            "outputsize": output_size
-        }
+        today = datetime.today().strftime('%Y%m%d')
+        filename = f"{symbol}_{today}.json"
+        filepath = "data\\"+filename
 
-        response = requests.get(self.BASE_URL, params=params)
-        data = response.json()
+        #TODO: temporary file saving - as API only allow 25 calls a day
+        #this will be changed to mongoDB
+        if os.path.exists(filepath):
+            logging.info(f"Loading data from {filepath}")
+            with open(filepath, 'r') as file:
+                data = json.load(file)
+
+        else:
+            params = {
+                "function": "TIME_SERIES_WEEKLY",
+                "symbol": symbol,
+                "apikey": self.api_key,
+                "outputsize": output_size
+            }
+
+            url = requests.Request('GET', self.BASE_URL, params=params).prepare().url
+            logging.info(f"Calling URL: {url}")
+
+            response = requests.get(self.BASE_URL, params=params)
+            data = response.json()
+
+            #temporary file saving
+            with open(filepath, 'w') as file:
+                json.dump(data, file)
 
         if "Weekly Time Series" in data:
             df = pd.DataFrame.from_dict(data["Weekly Time Series"], orient="index")
@@ -38,5 +62,6 @@ class AlphaVantageAPI:
             df = df.sort_index()  # Sort by date
             return df
         else:
-            raise ValueError("Error fetching data. Check API key and symbol.")
+            raise ValueError("Error fetching data. Check API key and symbol or file.")
+
 
