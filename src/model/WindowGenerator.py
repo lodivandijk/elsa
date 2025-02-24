@@ -56,16 +56,29 @@ class WindowGenerator:
 
     return inputs, labels
 
-def make_dataset(self, data):
-  data = np.array(data, dtype=np.float32)
-  ds = tf.keras.utils.timeseries_dataset_from_array(
-      data=data,
-      targets=None,
-      sequence_length=self.total_window_size,
-      sequence_stride=1,
-      shuffle=True,
-      batch_size=32,)
+  def make_dataset(self, data):
+    data = np.array(data, dtype=np.float32)
+    ds = tf.keras.utils.timeseries_dataset_from_array(
+        data=data,
+        targets=None,
+        sequence_length=self.total_window_size,
+        sequence_stride=1,
+        shuffle=True,
+        batch_size=32,)
 
-  ds = ds.map(self.split_window)
+    ds = ds.map(self.split_window)
 
-  return ds
+    return ds
+
+  @property
+  def train(self):
+    return self.make_dataset(self.train_df)
+
+  @property
+  def val(self):
+    return self.make_dataset(self.val_df)
+
+  @property
+  def test(self):
+    return self.make_dataset(self.test_df)
+
