@@ -4,6 +4,7 @@ import src.model.WindowGenerator as wg
 import logging
 import argparse
 import tensorflow as tf
+import src.model.Baseline as bl
 import numpy as np
 
 def main():
@@ -23,20 +24,19 @@ def main():
 
     logging.info(f"{split_data}")
 
-    window = wg.WindowGenerator(input_width=120, label_width=1, shift=1, split_data=split_data, label_columns=['close'])
-    logging.info(f"Window details \n {window}")
+    single_step_window = wg.WindowGenerator(
+        input_width=1, label_width=1, shift=1, split_data=split_data,
+        label_columns=['close'])
 
-    # Stack three slices, the length of the total window.
-    example_window = tf.stack([np.array(split_data.train_df[:window.total_window_size]),
-                               np.array(split_data.train_df[100:100+window.total_window_size]),
-                               np.array(split_data.train_df[200:200+window.total_window_size])])
+    baseline = bl.Baseline(label_index=single_step_window.column_indices['close'])
 
-    example_inputs, example_labels = window.split_window(example_window)
+    baseline.compile(loss=tf.keras.losses.MeanSquaredError(),
+                     metrics=[tf.keras.metrics.MeanAbsoluteError()])
 
-    logging.info('All shapes are: (batch, time, features)')
-    logging.info(f'Window shape: {example_window.shape}')
-    logging.info(f'Inputs shape: {example_inputs.shape}')
-    logging.info(f'Labels shape: {example_labels.shape}')
+    val_performance = {}
+    performance = {}
+    val_performance['Baseline'] = baseline.evaluate(single_step_window.val, return_dict=True)
+    performance['Baseline'] = baseline.evaluate(single_step_window.test, verbose=0, return_dict=True)
 
 if __name__ == "__main__":
     main()
