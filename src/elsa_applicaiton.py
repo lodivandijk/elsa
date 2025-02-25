@@ -6,6 +6,7 @@ import argparse
 import tensorflow as tf
 import src.model.Baseline as bl
 import numpy as np
+import src.model.ComplieFit as cf
 
 def main():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -37,6 +38,18 @@ def main():
     performance = {}
     val_performance['Baseline'] = baseline.evaluate(single_step_window.val, return_dict=True)
     performance['Baseline'] = baseline.evaluate(single_step_window.test, verbose=0, return_dict=True)
+
+    linear = tf.keras.Sequential([
+        tf.keras.layers.Dense(units=1)
+    ])
+
+    history = cf.compile_and_fit(linear, single_step_window)
+
+    val_performance['Linear'] = linear.evaluate(single_step_window.val, return_dict=True)
+    performance['Linear'] = linear.evaluate(single_step_window.test, verbose=0, return_dict=True)
+
+    logging.info(val_performance)
+    logging.info(performance)
 
 if __name__ == "__main__":
     main()
