@@ -5,7 +5,6 @@ import logging
 import argparse
 import tensorflow as tf
 import src.model.Baseline as bl
-import numpy as np
 import src.model.ComplieFit as cf
 
 def main():
