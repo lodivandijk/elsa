@@ -10,14 +10,15 @@ import src.model.ComplieFit as cf
 def main():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-    parser = argparse.ArgumentParser(description='API key')
+    parser = argparse.ArgumentParser(description='API key and ticker')
     parser.add_argument('api_key', type=str, help='Alphavantage API key')
+    parser.add_argument('ticker', type=str, help='Ticker')
     args = parser.parse_args()
 
-    API_KEY = args.api_key
-    alpha_vantage = av.AlphaVantageAPI(API_KEY)
+    #API_KEY = args.api_key
+    alpha_vantage = av.AlphaVantageAPI(args.api_key)
 
-    stock_data = alpha_vantage.get_weekly_stock_prices("AAPL")
+    stock_data = alpha_vantage.get_weekly_stock_prices(args.ticker)
     logging.info(f"Stock data shape: {stock_data.shape}")
 
     split_data = sd.SplitData(stock_data)

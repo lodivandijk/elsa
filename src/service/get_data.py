@@ -32,7 +32,7 @@ class AlphaVantageAPI:
 
         else:
             params = {
-                "function": "TIME_SERIES_WEEKLY",
+                "function": "TIME_SERIES_WEEKLY_ADJUSTED",
                 "symbol": symbol,
                 "apikey": self.api_key,
                 "outputsize": output_size
@@ -48,14 +48,16 @@ class AlphaVantageAPI:
             with open(filepath, 'w') as file:
                 json.dump(data, file)
 
-        if "Weekly Time Series" in data:
-            df = pd.DataFrame.from_dict(data["Weekly Time Series"], orient="index")
+        if "Weekly Adjusted Time Series" in data:
+            df = pd.DataFrame.from_dict(data["Weekly Adjusted Time Series"], orient="index")
             df = df.rename(columns={
                 "1. open": "open",
                 "2. high": "high",
                 "3. low": "low",
                 "4. close": "close",
-                "5. volume": "volume"
+                "5. adjusted close": "adjusted_close",
+                "6. volume": "volume",
+                "7. dividend amount": "dividend amount"
             })
             df = df.astype(float)  # Convert to float values
             df.index = pd.to_datetime(df.index)  # Convert index to datetime
