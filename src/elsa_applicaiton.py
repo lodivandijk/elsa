@@ -15,14 +15,11 @@ def main():
     parser.add_argument('ticker', type=str, help='Ticker')
     args = parser.parse_args()
 
-    #API_KEY = args.api_key
     alpha_vantage = av.AlphaVantageAPI(args.api_key)
-
     stock_data = alpha_vantage.get_weekly_stock_prices(args.ticker)
     logging.info(f"Stock data shape: {stock_data.shape}")
 
     split_data = sd.SplitData(stock_data)
-
     logging.info(f"{split_data}")
 
     single_step_window = wg.WindowGenerator(
