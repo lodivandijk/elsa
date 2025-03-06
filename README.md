@@ -18,6 +18,8 @@ The project involves fetching stock price data from an external API, preprocessi
 - Jupyter notebook: contains the code to visualise the data, it imports relevant modules and uses and example data set to visualise.
 - Main: contains the main code to run the project, it imports relevant modules and uses the data from the API to run the models.
 
+![img.png](images/img.png)
+
 ## Technologies Used
 
 - Python
